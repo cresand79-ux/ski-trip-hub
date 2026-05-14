@@ -62,7 +62,7 @@
       "transferType": "Split (SBB Train & Private Minibus)",
       "passType": "Half-Price Pass (45 CHF)",
       "discountInfo": "Local resort discounts apply.",
-      "tricountUrl": "",
+      "tricountUrl": "https://tricount.com/tTeZvjhKBeKgttfQcp",
       "minibusCost": "549 CHF return (Up to 7 people)",
       "trainCostFull": { "single": 59, "return": 118 }
     }
