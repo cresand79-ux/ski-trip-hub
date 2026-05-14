@@ -1,0 +1,103 @@
+{
+  "trip": {
+    "resort": "Andermatt",
+    "year": 2027,
+    "dates": {
+      "start": "Jan 20, 2027",
+      "end": "Jan 24, 2027"
+    },
+    "accommodation": {
+      "name": "Alpenhotel Schlüssel",
+      "address": "Gotthardstrasse 21, 6490 Andermatt, Switzerland",
+      "roomType": "Group Booking - Multiple Rooms",
+      "url": "https://hotelschluessel.com/en/home"
+    },
+    "flights": {
+      "outboundHub": "London Heathrow (LHR)",
+      "destinationHub": "Zurich Airport (ZRH)",
+      "waves": [
+        {
+          "id": "early",
+          "title": "☀️ Early Wave (Aaron G)",
+          "outbound": "LX319 | 12:05 LHR → 14:50 ZRH",
+          "return": "LX340 | 20:55 ZRH → 21:40 LHR",
+          "transferNote": "Perfect for the scenic SBB Train transfer up the pass."
+        },
+        {
+          "id": "mid",
+          "title": "⛅ Mid Wave (Andy F / Richard S - Considering)",
+          "outbound": "BAxxxx | 15:35 LHR → 18:20 ZRH",
+          "return": "BA0723 | 21:10 ZRH → 21:55 LHR",
+          "transferNote": "Can train it, or catch a van if timings consolidate."
+        },
+        {
+          "id": "late",
+          "title": "🌙 Late Wave (Andy C / Jon D)",
+          "outbound": "LX327 / BA0724 | 18:45 LHR → 21:35 ZRH",
+          "return": "LX340 / BA0723 | 21:00 ZRH → LHR",
+          "transferNote": "Landing late means SBB trains stop running deep. Minibus required."
+        }
+      ]
+    },
+    "rentals": [
+      {
+        "shop": "Meyer's Sporthaus",
+        "discount": "10% Off",
+        "url": "https://meyers-sporthaus.ch/en/",
+        "note": "Local independent shop right near basecamp."
+      },
+      {
+        "shop": "Intersport Andermatt",
+        "discount": "6% Off",
+        "url": "https://www.intersport.ch/en/stores/intersport-rent-andermatt-central-s6162",
+        "note": "Standard network hire discount applied."
+      }
+    ],
+    "commute": {
+      "station": { "name": "Andermatt Station", "dist": "400m / 5 min" },
+      "gutsch": { "name": "Gütsch-Express (Nätschen)", "dist": "500m / 7 min" },
+      "gemsstock": { "name": "Gemsstockbahn", "dist": "550m / 8 min" }
+    },
+    "morningCommute": [
+      { "id": "andermatt-station", "icon": "🚉", "name": "Andermatt Station", "dist": "400m / 5 min" },
+      { "id": "gutsch-express", "icon": "🚠", "name": "Gütsch-Express (Nätschen)", "dist": "500m / 7 min" },
+      { "id": "gemsstockbahn", "icon": "🚠", "name": "Gemsstockbahn", "dist": "550m / 8 min" }
+    ],
+    "mapUrl": "https://www.google.com/maps/d/embed?mid=1BzP2w1NHfNj_19WryQ5Jx_dvC22x62A",
+    "logistics": {
+      "transferType": "Split (SBB Train & Private Minibus)",
+      "passType": "Half-Price Pass (45 CHF)",
+      "discountInfo": "Local resort discounts apply.",
+      "passInfo": {
+        "title": "The 45 CHF Lift Pass Strategy",
+        "description": "🔥 Andermatt does not use multi-day ticket scaling. Buy the resort's Half-Price Pass for 45 CHF online ahead of time. This unlocks standard 1-day tickets for 45 CHF instead of 89 CHF.",
+        "passUrl": "https://www.andermatt-sedrun-disentis.ch/en/stories/buy-half-price-pass",
+        "usePassLabel": "Apply Half-Price Pass (45 CHF upfront + 45 CHF/day)",
+        "reuseCardLabel": "Reusing old Skidata keycard (Save 5 CHF)",
+        "standardDailyRate": 89,
+        "passDailyRate": 45,
+        "passUpfront": 45,
+        "keycardFee": 5,
+        "showReuseCard": true,
+        "currency": "CHF",
+        "note": "♻️ Register an old plastic Skidata keycard from a prior trip to skip the extra card fee."
+      },
+      "tricountUrl": "https://tricount.com/tTeZvjhKBeKgttfQcp",
+      "minibusCost": "549 CHF return (Up to 7 people)",
+      "trainCostFull": { "single": 59, "return": 118 }
+    }
+  },
+  "participants": [
+    { "name": "Andy C", "status": "Fully booked" },
+    { "name": "Jon D", "status": "Fully booked" },
+    { "name": "Aaron G", "status": "Fully booked" },
+    { "name": "Andy F", "status": "Flight pending" },
+    { "name": "Richard S", "status": "Flight pending" },
+    { "name": "Vinnie M", "status": "Hotel booked" },
+    { "name": "Tom M", "status": "Hotel booked" },
+    { "name": "Levi F", "status": "Hotel booked" },
+    { "name": "Ian", "status": "Hotel booked" },
+    { "name": "Charles", "status": "Hotel booked" },
+    { "name": "Participant 11", "status": "Hotel booked" }
+  ]
+}
