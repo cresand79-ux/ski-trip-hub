@@ -25,14 +25,14 @@
         },
         {
           "id": "mid",
-          "title": "⛅ Mid Wave (Andy F / Richard S - Options)",
+          "title": "⛅ Mid Wave (Andy F / Richard S - Considering)",
           "outbound": "BAxxxx | 15:35 LHR → 18:20 ZRH",
           "return": "BA0723 | 21:10 ZRH → 21:55 LHR",
           "transferNote": "Can train it, or catch a van if timings consolidate."
         },
         {
           "id": "late",
-          "title": "🌙 Late Wave (Frosty / Jon D)",
+          "title": "🌙 Late Wave (Andy C / Jon D)",
           "outbound": "LX327 / BA0724 | ~18:45 LHR → 21:35 ZRH",
           "return": "LX340 / BA0723 | ~21:00 ZRH → LHR",
           "transferNote": "Landing late means SBB trains stop running deep. Minibus required."
