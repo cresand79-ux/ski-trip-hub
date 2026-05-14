@@ -1,57 +1,197 @@
-import React, { useState } from 'react';
-import tripData from './data/trip.json';
+import React, { useMemo, useState } from 'react';
+import { trips } from './data';
 import './index.css';
 
 function App() {
-  // Defensive guard: Ensure trip and participants exist cleanly
-  const trip = tripData?.trip || {};
-  const participants = tripData?.participants || [];
-
-  // 1. Core Structural UI States
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [isPassExpanded, setIsPassExpanded] = useState(false);
   const [isFlightsExpanded, setIsFlightsExpanded] = useState(true);
-
-  // 2. Interactive Calculator States
-  const [useHalfPricePass, setUseHalfPricePass] = useState(true); 
+  const [useHalfPricePass, setUseHalfPricePass] = useState(true);
   const [reuseCard, setReuseCard] = useState(false);
-  const [outboundMode, setOutboundMode] = useState('split'); 
-  const [returnMode, setReturnMode] = useState('van');      
+  const [outboundMode, setOutboundMode] = useState('split');
+  const [returnMode, setReturnMode] = useState('van');
+  const [selectedTripSlug, setSelectedTripSlug] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return new URLSearchParams(window.location.search).get('trip') || '';
+  });
 
-  // 3. Lift Pass Math Logic
+  const trip = useMemo(() => trips.find((item) => item.slug === selectedTripSlug), [selectedTripSlug]);
+  const activeTrips = trips.filter((item) => item.status !== 'archived');
+  const archivedTrips = trips.filter((item) => item.status === 'archived');
+  const tripNotFound = selectedTripSlug && !trip;
+
   const passDays = 4;
-  const standardDailyRate = 89; 
-  const halfPriceDailyRate = 45;
-  const halfPricePassUpfront = 45; 
-  const keycardFee = 5;
-
-  const totalWithoutPass = (standardDailyRate * passDays) + keycardFee;
-  const totalWithPass = halfPricePassUpfront + (halfPriceDailyRate * passDays) + (reuseCard ? 0 : keycardFee);
-  const currentLiftTotal = useHalfPricePass ? totalWithPass : totalWithoutPass - (reuseCard ? 5 : 0);
-  const passSavings = totalWithoutPass - currentLiftTotal;
 
   const getStatusBadgeStyles = (status) => {
     switch (status) {
       case 'Fully booked':
-        return { label: "✅ Fully Booked", style: "bg-green-950 text-green-400 border-green-800" };
+        return { label: '✅ Fully Booked', style: 'bg-green-950 text-green-400 border-green-800' };
       case 'Flight pending':
-        return { label: "⏳ Flight Pending", style: "bg-amber-950 text-amber-400 border-amber-800" };
+        return { label: '⏳ Flight Pending', style: 'bg-amber-950 text-amber-400 border-amber-800' };
       case 'Hotel booked':
-        return { label: "🏨 Hotel Booked", style: "bg-blue-950 text-blue-400 border-blue-800" };
+        return { label: '🏨 Hotel Booked', style: 'bg-blue-950 text-blue-400 border-blue-800' };
       default:
-        return { label: "💤 TBC", style: "bg-slate-900 text-slate-500 border-slate-700" };
+        return { label: '💤 TBC', style: 'bg-slate-900 text-slate-500 border-slate-700' };
     }
   };
 
+  const openTrip = (slug) => {
+    if (typeof window === 'undefined') return;
+    const url = `${window.location.pathname}?trip=${encodeURIComponent(slug)}`;
+    window.history.pushState({}, '', url);
+    setSelectedTripSlug(slug);
+  };
+
+  const clearSelection = () => {
+    if (typeof window === 'undefined') return;
+    window.history.pushState({}, '', window.location.pathname);
+    setSelectedTripSlug('');
+  };
+
+  if (!trip) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white p-4 font-sans pb-12">
+        <header className="mb-8 border-b border-slate-700 pb-4">
+          <h1 className="text-3xl font-bold text-blue-400">Trip Hub</h1>
+          <p className="text-slate-400 max-w-2xl">
+            Select a trip tile below to open its details. Each trip is stored in its own JSON file, and direct linking is supported using <span className="text-blue-300">?trip=&lt;slug&gt;</span>.
+          </p>
+        </header>
+
+        {tripNotFound && (
+          <div className="mb-6 rounded-2xl border border-rose-700 bg-rose-950/60 p-4 text-rose-200">
+            Trip <span className="font-semibold">{selectedTripSlug}</span> was not found. Please choose one of the available trips below.
+          </div>
+        )}
+
+        <section className="grid gap-6 xl:grid-cols-2">
+          <div className="bg-slate-800 rounded-3xl border border-slate-700 p-6">
+            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-blue-300">Active Trips</h2>
+                <p className="text-slate-400 text-sm">Trips currently in planning or for the next season.</p>
+              </div>
+              <div className="text-xs text-slate-500">{activeTrips.length} active trip{activeTrips.length === 1 ? '' : 's'}</div>
+            </div>
+            <div className="grid gap-4">
+              {activeTrips.map((item) => (
+                <article key={item.slug} className="group overflow-hidden rounded-3xl border border-slate-700 bg-slate-900/80 p-5 transition hover:border-blue-500">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Active</p>
+                      <h3 className="mt-2 text-lg font-semibold text-blue-300">{item.resort} {item.year}</h3>
+                      <p className="text-slate-400 text-sm">{item.dates?.start} → {item.dates?.end}</p>
+                    </div>
+                    <span className="rounded-full border border-green-800 bg-green-950/50 px-3 py-1 text-[11px] font-semibold text-green-300">Active</span>
+                  </div>
+                  <div className="mt-4 space-y-2 text-slate-300 text-sm">
+                    <p>🏨 {item.accommodation?.name}</p>
+                    <p>👥 {item.participants.length} participant{item.participants.length === 1 ? '' : 's'}</p>
+                    <p>✈️ {item.flights?.outboundHub || 'LHR'} → {item.flights?.destinationHub || 'ZRH'}</p>
+                  </div>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <button onClick={() => openTrip(item.slug)} className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-500">
+                      Open Trip
+                    </button>
+                    {item.accommodation?.url && (
+                      <a href={item.accommodation.url} target="_blank" rel="noreferrer" className="text-[11px] text-blue-300 hover:underline">
+                        Hotel website ↗
+                      </a>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-slate-800 rounded-3xl border border-slate-700 p-6">
+            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-blue-300">Archived Trips</h2>
+                <p className="text-slate-400 text-sm">Past trips are kept for reference and direct linking.</p>
+              </div>
+              <div className="text-xs text-slate-500">{archivedTrips.length} archived trip{archivedTrips.length === 1 ? '' : 's'}</div>
+            </div>
+            <div className="grid gap-4">
+              {archivedTrips.length === 0 ? (
+                <div className="rounded-3xl border border-slate-700 bg-slate-900/80 p-5 text-slate-400">No archived trips yet.</div>
+              ) : (
+                archivedTrips.map((item) => (
+                  <article key={item.slug} className="overflow-hidden rounded-3xl border border-slate-700 bg-slate-900/80 p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Archived</p>
+                        <h3 className="mt-2 text-lg font-semibold text-blue-300">{item.resort} {item.year}</h3>
+                        <p className="text-slate-400 text-sm">{item.dates?.start} → {item.dates?.end}</p>
+                      </div>
+                      <span className="rounded-full border border-slate-600 bg-slate-950/60 px-3 py-1 text-[11px] font-semibold text-slate-300">Archived</span>
+                    </div>
+                    <div className="mt-4 space-y-2 text-slate-300 text-sm">
+                      <p>🏨 {item.accommodation?.name}</p>
+                      <p>👥 {item.participants.length} participant{item.participants.length === 1 ? '' : 's'}</p>
+                      <p>✈️ {item.flights?.outboundHub || 'LHR'} → {item.flights?.destinationHub || 'ZRH'}</p>
+                    </div>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <button onClick={() => openTrip(item.slug)} className="inline-flex items-center justify-center rounded-full bg-slate-700 px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-600">
+                        Open Trip
+                      </button>
+                      {item.accommodation?.url && (
+                        <a href={item.accommodation.url} target="_blank" rel="noreferrer" className="text-[11px] text-blue-300 hover:underline">
+                          Hotel website ↗
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const participants = trip.participants || [];
+  const morningCommute = trip.morningCommute || Object.entries(trip.commute || {}).map(([key, item]) => {
+    const name = typeof item === 'string' ? key : item.name || key;
+    const dist = typeof item === 'string' ? '' : item.dist || '';
+    const icon = key.toLowerCase().includes('station') ? '🚉' : '🚠';
+    return { id: key, icon, name, dist };
+  });
+
+  const passInfo = trip.logistics?.passInfo || {
+    title: 'Lift Pass Strategy',
+    description: 'Use the resort pass option that matches the trip and buy it in advance when available.',
+    passUrl: trip.logistics?.passUrl || '#',
+    usePassLabel: 'Apply resort lift pass pricing',
+    reuseCardLabel: 'Reuse an existing lift card when applicable',
+    standardDailyRate: 0,
+    passDailyRate: 0,
+    passUpfront: 0,
+    keycardFee: 0,
+    showReuseCard: false,
+    currency: trip.logistics?.currency || 'CHF',
+    note: trip.logistics?.discountInfo || '',
+  };
+
+  const totalWithoutPass = passInfo.standardDailyRate * passDays + passInfo.keycardFee;
+  const totalWithPass = passInfo.passUpfront + passInfo.passDailyRate * passDays + (reuseCard ? 0 : passInfo.keycardFee);
+  const currentLiftTotal = useHalfPricePass ? totalWithPass : totalWithoutPass - (reuseCard ? passInfo.keycardFee : 0);
+  const passSavings = totalWithoutPass - currentLiftTotal;
+  const currency = passInfo.currency || 'CHF';
+
   return (
     <div className="min-h-screen bg-slate-900 text-white p-4 font-sans pb-12">
-      {/* Header */}
-      <header className="mb-8 border-b border-slate-700 pb-4">
-        <h1 className="text-3xl font-bold text-blue-400">{trip.resort || 'Resort'} {trip.year || ''}</h1>
-        <p className="text-slate-400">{trip.dates?.start} to {trip.dates?.end}</p>
+      <header className="mb-8 border-b border-slate-700 pb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-blue-400">{trip.resort || 'Resort'} {trip.year || ''}</h1>
+          <p className="text-slate-400">{trip.dates?.start} to {trip.dates?.end}</p>
+        </div>
+        <button onClick={clearSelection} className="rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-sm text-slate-200 transition hover:border-blue-500 hover:text-white">
+          ← Back to trip list
+        </button>
       </header>
 
-      {/* Accommodation Card */}
       <section className="bg-slate-800 rounded-xl p-6 mb-6 shadow-xl border border-slate-700 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h2 className="text-xl font-semibold mb-2">Basecamp: {trip.accommodation?.name}</h2>
@@ -62,9 +202,9 @@ function App() {
         </div>
         {trip.accommodation?.url && (
           <div className="shrink-0">
-            <a 
-              href={trip.accommodation.url} 
-              target="_blank" 
+            <a
+              href={trip.accommodation.url}
+              target="_blank"
               rel="noreferrer"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors shadow-md"
             >
@@ -74,9 +214,8 @@ function App() {
         )}
       </section>
 
-      {/* Flight Waves & Transfer Planner */}
       <section className="bg-slate-800 rounded-xl border border-slate-700 mb-6 overflow-hidden">
-        <button 
+        <button
           onClick={() => setIsFlightsExpanded(!isFlightsExpanded)}
           className="w-full flex justify-between items-center p-5 font-bold text-lg text-blue-400 hover:bg-slate-700/30 transition-colors select-none"
         >
@@ -86,7 +225,6 @@ function App() {
 
         {isFlightsExpanded && (
           <div className="p-5 pt-0 border-t border-slate-700/50 bg-slate-800/40 space-y-6">
-            {/* Dynamic Flight Waves Mapping */}
             {trip.flights?.waves && trip.flights.waves.length > 0 && (
               <div className="grid md:grid-cols-3 gap-4 mt-4">
                 {trip.flights.waves.map((wave, index) => (
@@ -105,7 +243,6 @@ function App() {
             )}
 
             <div className="grid md:grid-cols-2 gap-6 pt-2">
-              {/* Outbound Mode Selection */}
               <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-700/40">
                 <h4 className="text-sm font-bold text-slate-300 mb-3">Wednesday Outbound Strategy</h4>
                 <div className="space-y-2">
@@ -125,7 +262,6 @@ function App() {
                 )}
               </div>
 
-              {/* Sunday Return Strategy Container */}
               <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-700/40 flex flex-col justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-slate-300 mb-3">Sunday Return Strategy</h4>
@@ -140,7 +276,7 @@ function App() {
                     </label>
                   </div>
                 </div>
-                
+
                 <div className="mt-4 p-3 bg-slate-900/80 border border-slate-700/60 rounded text-xs space-y-2">
                   {returnMode === 'van' ? (
                     <>
@@ -169,9 +305,8 @@ function App() {
         )}
       </section>
 
-      {/* Map & Morning Commute Section */}
       <section className="bg-slate-800 rounded-xl border border-slate-700 mb-6 overflow-hidden">
-        <button 
+        <button
           onClick={() => setIsMapExpanded(!isMapExpanded)}
           className="w-full flex justify-between items-center p-5 font-bold text-lg text-blue-400 hover:bg-slate-700/30 transition-colors select-none"
         >
@@ -182,31 +317,25 @@ function App() {
         {isMapExpanded && (
           <div className="p-5 pt-0 grid md:grid-cols-2 gap-6 border-t border-slate-700/50 bg-slate-800/40">
             <div className="border border-slate-700 h-[350px] overflow-hidden relative rounded-xl mt-4">
-              <iframe 
-                title="Andermatt Group Map"
+              <iframe
+                title={`${trip.resort || 'Trip'} Map`}
                 className="absolute top-[-55px] left-0 w-full h-[410px] rounded-lg"
-                src="https://www.google.com/maps/d/embed?mid=1BzP2w1NHfNj_19WryQ5Jx_dvC22x62A"
-                allowFullScreen="" 
-                loading="lazy">
-              </iframe>
+                src={trip.mapUrl || 'https://www.google.com/maps/d/embed?mid=1BzP2w1NHfNj_19WryQ5Jx_dvC22x62A'}
+                allowFullScreen=""
+                loading="lazy"
+              />
             </div>
 
             <div className="flex flex-col justify-between mt-4">
               <div>
                 <h3 className="text-md font-bold mb-4 text-slate-300">The Morning Commute</h3>
                 <ul className="space-y-4 text-slate-300 text-sm">
-                  <li className="flex justify-between items-center">
-                    <span>🚉 {trip.commute?.station?.name || 'Andermatt Station'}</span>
-                    <span className="bg-slate-700 px-2 py-1 rounded text-xs">{trip.commute?.station?.dist || '400m'}</span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span>🚠 {trip.commute?.gutsch?.name || 'Gütsch-Express'}</span>
-                    <span className="bg-slate-700 px-2 py-1 rounded text-xs">{trip.commute?.gutsch?.dist || '500m'}</span>
-                  </li>
-                  <li className="flex justify-between items-center">
-                    <span>🚠 {trip.commute?.gemsstock?.name || 'Gemsstockbahn'}</span>
-                    <span className="bg-slate-700 px-2 py-1 rounded text-xs">{trip.commute?.gemsstock?.dist || '550m'}</span>
-                  </li>
+                  {morningCommute.map((item) => (
+                    <li key={item.id} className="flex justify-between items-center">
+                      <span>{item.icon} {item.name}</span>
+                      <span className="bg-slate-700 px-2 py-1 rounded text-xs">{item.dist}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="pt-4 border-t border-slate-700 mt-4">
@@ -219,9 +348,8 @@ function App() {
         )}
       </section>
 
-      {/* Lift Pass & Gear Hire Section */}
       <section className="bg-slate-800 rounded-xl border border-slate-700 mb-6 overflow-hidden">
-        <button 
+        <button
           onClick={() => setIsPassExpanded(!isPassExpanded)}
           className="w-full flex justify-between items-center p-5 font-bold text-lg text-blue-400 hover:bg-slate-700/30 transition-colors select-none"
         >
@@ -232,56 +360,51 @@ function App() {
         {isPassExpanded && (
           <div className="p-5 pt-0 border-t border-slate-700/50 bg-slate-800/40 space-y-6">
             <div className="grid md:grid-cols-2 gap-6 mt-4">
-              {/* Left Column: Lift Pass Details */}
               <div className="flex flex-col justify-between bg-slate-900/30 p-4 rounded-xl border border-slate-700/40">
                 <div className="space-y-3 text-slate-300 text-sm leading-relaxed">
-                  <h4 className="font-bold text-blue-300">The 45 CHF Lift Pass Strategy</h4>
-                  <p>
-                    🔥 Andermatt does not use multi-day ticket scaling. Buy the resort's <strong className="text-white">Half-Price Pass for 45 CHF</strong> online ahead of time. This unlocks standard 1-day tickets for <strong className="text-green-400">{halfPriceDailyRate} CHF</strong> instead of {standardDailyRate} CHF.
-                  </p>
-                  <p>
-                    ♻️ Register an old plastic keycard from previous trips (e.g., Morzine/Skidata network) online to skip the extra card fees.
-                  </p>
+                  <h4 className="font-bold text-blue-300">{passInfo.title}</h4>
+                  <p>{passInfo.description}</p>
+                  {passInfo.note && <p>{passInfo.note}</p>}
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-800">
-                  <a href="https://www.andermatt-sedrun-disentis.ch/en/stories/buy-half-price-pass" target="_blank" rel="noreferrer" className="inline-block text-xs text-blue-400 hover:underline">
-                    Official Ski Pass Portal →
+                  <a href={passInfo.passUrl || trip.logistics?.passUrl} target="_blank" rel="noreferrer" className="inline-block text-xs text-blue-400 hover:underline">
+                    View pass details →
                   </a>
                 </div>
               </div>
 
-              {/* Right Column: Calculator Component */}
               <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-700/40 flex flex-col justify-between">
                 <div>
                   <h4 className="font-bold text-blue-300 mb-3">Pass Cost Framework</h4>
                   <div className="space-y-3 mb-4">
                     <label className="flex items-center space-x-3 cursor-pointer text-xs text-slate-300 select-none">
                       <input type="checkbox" checked={useHalfPricePass} onChange={(e) => setUseHalfPricePass(e.target.checked)} className="rounded bg-slate-900 border-slate-600 text-blue-500 focus:ring-0 w-4 h-4" />
-                      <span>Apply Half-Price Pass (45 CHF upfront + 45 CHF/day)</span>
+                      <span>{passInfo.usePassLabel}</span>
                     </label>
-                    <label className="flex items-center space-x-3 cursor-pointer text-xs text-slate-300 select-none">
-                      <input type="checkbox" checked={reuseCard} onChange={(e) => setReuseCard(e.target.checked)} className="rounded bg-slate-900 border-slate-600 text-blue-500 focus:ring-0 w-4 h-4" />
-                      <span className="text-green-400">Reusing old Skidata keycard (Save {keycardFee} CHF)</span>
-                    </label>
+                    {passInfo.showReuseCard && (
+                      <label className="flex items-center space-x-3 cursor-pointer text-xs text-slate-300 select-none">
+                        <input type="checkbox" checked={reuseCard} onChange={(e) => setReuseCard(e.target.checked)} className="rounded bg-slate-900 border-slate-600 text-blue-500 focus:ring-0 w-4 h-4" />
+                        <span className="text-green-400">{passInfo.reuseCardLabel}</span>
+                      </label>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-4 bg-slate-900/50 p-3 rounded-lg border border-slate-800 text-sm font-mono">
                     <div>
                       <span className="text-[10px] text-slate-400 block">Standard Total</span>
-                      <span>{totalWithoutPass} CHF</span>
+                      <span>{totalWithoutPass} {currency}</span>
                     </div>
                     <div>
                       <span className="text-[10px] text-blue-400 block">Your Total</span>
-                      <span className="text-blue-400 font-bold">{currentLiftTotal} CHF</span>
+                      <span className="text-blue-400 font-bold">{currentLiftTotal} {currency}</span>
                     </div>
                   </div>
                 </div>
                 <div className={`p-2.5 rounded text-center text-xs font-semibold border mt-4 ${passSavings > 0 ? 'bg-green-950/40 text-green-400 border-green-800/50' : 'bg-slate-900/80 text-slate-500 border-slate-800'}`}>
-                  {passSavings > 0 ? `🎉 Saves you ${passSavings} CHF! (${passSavings * participants.length} CHF group total)` : `Configure options above`}
+                  {passSavings > 0 ? `🎉 Saves you ${passSavings} ${currency}! (${passSavings * participants.length} ${currency} group total)` : `Configure options above`}
                 </div>
               </div>
             </div>
 
-            {/* Rental Discounts Array */}
             {trip.rentals && trip.rentals.length > 0 && (
               <div className="border-t border-slate-700/50 pt-4">
                 <h4 className="text-sm font-bold text-slate-200 mb-3">🎿 Equipment Rental Group Discounts</h4>
@@ -309,25 +432,22 @@ function App() {
         )}
       </section>
 
-      {/* Logistics & Crew Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Logistics Profile Panel */}
         <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-bold mb-3 text-blue-400">Logistics Overview</h3>
             <ul className="space-y-3 text-slate-300 text-sm">
               <li>✈️ Outbound Hub: {trip.flights?.outboundHub || 'LHR'}</li>
               <li>🛬 Destination Hub: {trip.flights?.destinationHub || 'ZRH'}</li>
-              <li>🚍 Outbound Mode: {outboundMode === 'split' ? "Split (Train & Late Minibus)" : "Consolidated Vans"}</li>
-              <li>✨ Return Transfer: {returnMode === 'van' ? "Private Van (17:30 Depart)" : "SBB Train (16:36 Depart)"}</li>
+              <li>🚍 Outbound Mode: {outboundMode === 'split' ? 'Split (Train & Late Minibus)' : 'Consolidated Vans'}</li>
+              <li>✨ Return Transfer: {returnMode === 'van' ? 'Private Van (17:30 Depart)' : 'SBB Train (16:36 Depart)'}</li>
             </ul>
           </div>
 
-          {/* Tricount Smart QR Container */}
           {trip.logistics?.tricountUrl && (
             <div className="mt-6 pt-4 border-t border-slate-700/60 flex items-center gap-4 bg-slate-900/40 p-3 rounded-xl border border-slate-700/30">
               <div className="bg-white p-1.5 rounded-lg shrink-0 shadow-md">
-                <img 
+                <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(trip.logistics.tricountUrl)}&bgColor=ffffff&color=0f172a`}
                   alt="Tricount QR"
                   className="w-16 h-16"
@@ -343,7 +463,6 @@ function App() {
           )}
         </div>
 
-        {/* The Group Crew List */}
         <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
           <h3 className="text-lg font-bold mb-3 text-blue-400">The Crew ({participants.length})</h3>
           <div className="grid grid-cols-1 gap-2">
