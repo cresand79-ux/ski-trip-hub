@@ -58,10 +58,30 @@
       "gutsch": { "name": "Gütsch-Express (Nätschen)", "dist": "500m / 7 min" },
       "gemsstock": { "name": "Gemsstockbahn", "dist": "550m / 8 min" }
     },
+    "morningCommute": [
+      { "id": "andermatt-station", "icon": "🚉", "name": "Andermatt Station", "dist": "400m / 5 min" },
+      { "id": "gutsch-express", "icon": "🚠", "name": "Gütsch-Express (Nätschen)", "dist": "500m / 7 min" },
+      { "id": "gemsstockbahn", "icon": "🚠", "name": "Gemsstockbahn", "dist": "550m / 8 min" }
+    ],
+    "mapUrl": "https://www.google.com/maps/d/embed?mid=1BzP2w1NHfNj_19WryQ5Jx_dvC22x62A",
     "logistics": {
       "transferType": "Split (SBB Train & Private Minibus)",
       "passType": "Half-Price Pass (45 CHF)",
       "discountInfo": "Local resort discounts apply.",
+      "passInfo": {
+        "title": "The 45 CHF Lift Pass Strategy",
+        "description": "🔥 Andermatt does not use multi-day ticket scaling. Buy the resort's Half-Price Pass for 45 CHF online ahead of time. This unlocks standard 1-day tickets for 45 CHF instead of 89 CHF.",
+        "passUrl": "https://www.andermatt-sedrun-disentis.ch/en/stories/buy-half-price-pass",
+        "usePassLabel": "Apply Half-Price Pass (45 CHF upfront + 45 CHF/day)",
+        "reuseCardLabel": "Reusing old Skidata keycard (Save 5 CHF)",
+        "standardDailyRate": 89,
+        "passDailyRate": 45,
+        "passUpfront": 45,
+        "keycardFee": 5,
+        "showReuseCard": true,
+        "currency": "CHF",
+        "note": "♻️ Register an old plastic Skidata keycard from a prior trip to skip the extra card fee."
+      },
       "tricountUrl": "https://tricount.com/tTeZvjhKBeKgttfQcp",
       "minibusCost": "549 CHF return (Up to 7 people)",
       "trainCostFull": { "single": 59, "return": 118 }

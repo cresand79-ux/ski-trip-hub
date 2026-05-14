@@ -1,0 +1,78 @@
+{
+  "trip": {
+    "resort": "Morzine",
+    "year": 2026,
+    "status": "archived",
+    "dates": {
+      "start": "Jan 14, 2026",
+      "end": "Jan 18, 2026"
+    },
+    "accommodation": {
+      "name": "Chalet Jouet",
+      "address": "Morzine, France",
+      "roomType": "Self catered chalet - Group Booking",
+      "url": "https://www.reach4thealps.com/chalets/chalet-jouet/"
+    },
+    "flights": {
+      "outboundHub": "London Luton (LUT)",
+      "destinationHub": "Geneva (GVA)",
+      "waves": [
+        {
+          "id": "morzine-early",
+          "title": "☀️ Early Wave",
+          "outbound": "EZY253 | 08:00 LUT → 10:45 GVA",
+          "return": "EZY2546 | 17:15 GVA → 18:00 LUT",
+          "transferNote": "Shared minibus to Morzine."
+        }
+      ]
+    },
+    "commute": {
+      "Super-Morzine": { "name": "Avoriaz / Swiss", "dist": "450m / 5 - 6 min" },
+      "Le Pleney": { "name": "Morzine", "dist": "400m / 5 min" }
+    },
+    "morningCommute": [
+      { "id": "super-morzine", "icon": "🚠", "name": "Avoriaz / Swiss", "dist": "450m / 5 - 6 min" },
+      { "id": "le-pleney", "icon": "🚠", "name": "Morzine", "dist": "400m / 5 min" }
+    ],
+    "mapUrl": "https://www.google.com/maps/d/embed?mid=1ipJs1ivMpE9hKwQz5FrJ-jZ_bQbNerI&ehbc=2E312F",
+    "logistics": {
+      "transferType": "Shared Minibus",
+      "passType": "4-day Portes du Soleil / Morzine lift pass",
+      "passInfo": {
+        "title": "Portes du Soleil Lift Pass Strategy",
+        "description": "Book the 4-day Morzine / Portes du Soleil lift pass online ahead of time and collect it in resort. This gives access to the full lift network across Morzine and Avoriaz.",
+        "passUrl": "https://www.portesdusoleil.com/en/plan-your-trip/practical-information/skipasses",
+        "usePassLabel": "Apply 4-day Portes du Soleil lift pass pricing",
+        "reuseCardLabel": "",
+        "standardDailyRate": 95,
+        "passDailyRate": 75,
+        "passUpfront": 0,
+        "keycardFee": 0,
+        "showReuseCard": false,
+        "currency": "EUR",
+        "note": "🗻 The 4-day pass was the best value for the full domain and avoided expensive single-day tickets."
+      },
+      "discountInfo": "Group lift pass pricing was best booked online in advance; the 4-day pass was the right fit for our stay.",
+      "tricountUrl": "",
+      "minibusCost": "305 EUR return",
+      "trainCostFull": { "single": 0, "return": 0 }
+    },
+    "rentals": [
+      {
+        "shop": "Morzine Ski Hire (Facebook)",
+        "discount": "Group booking rate",
+        "url": "https://www.facebook.com/MorzineSkiHire",
+        "note": "Booked via Facebook; boots, skis and boards were delivered to Chalet Jouet and collected at the end of the stay."
+      },
+      {
+        "shop": "Skiset Morzine",
+        "discount": "10% Off",
+        "url": "https://www.skiset.com/en/France/Rhone-alps/Morzine-r2484.html",
+        "note": "Backup hire shop for helmets and poles, good for last-minute add-ons."
+      }
+    ]
+  },
+  "participants": [
+    { "name": "Archive Group", "status": "Fully booked" }
+  ]
+}
